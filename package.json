@@ -1,0 +1,49 @@
+{
+  "name": "state-bridge-mcp",
+  "version": "1.0.0",
+  "description": "MCP server + client SDK for bridging Zustand stores over WebSocket",
+  "type": "module",
+  "bin": {
+    "state-bridge-mcp": "dist/server/index.js"
+  },
+  "exports": {
+    "./server": {
+      "import": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["mcp", "zustand", "state", "bridge", "websocket", "debug"],
+  "author": "Jay",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "ws": "^8.18.0",
+    "zod": "^3.24.0"
+  },
+  "peerDependencies": {
+    "zustand": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zustand": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.18.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}
