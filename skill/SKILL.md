@@ -1,29 +1,43 @@
 ---
 name: state-bridge
-description: Work on the state-bridge-mcp package — a Zustand-to-MCP bridge over WebSocket. Use when the user references "state bridge", "state-bridge-mcp", "mcp bridge", "zustand bridge", "bridge package", "mcp package", or wants to modify, debug, build, or extend the bridge package at ~/Projects/state-bridge-mcp.
-argument-hint: "[task description]"
-disable-model-invocation: true
+description: Diagnose Huginn app state using the state bridge MCP tools. Use when debugging UI issues, investigating unexpected behavior, checking app state, or when you need to understand what the Huginn app is currently doing.
+user-invocable: false
 ---
 
-# State Bridge MCP
+# State Bridge — Live App State Access
 
-Package: `state-bridge-mcp` at `~/Projects/state-bridge-mcp`
-Repo: `github.com/jonjoe/mcp-state-bridge`
+The `huginn-state` MCP server bridges Huginn's Zustand stores over WebSocket. When the app is running on the emulator and connected, you can read and manipulate its live state.
 
-MCP server + client SDK for bridging Zustand stores over WebSocket. Server is a CLI binary, client is a zero-dep SDK for any platform.
+## Available Tools
 
-## Task
+- `mcp__huginn-state__connection_status` — Check if Huginn is connected. Always call this first.
+- `mcp__huginn-state__list_stores` — List all stores and their top-level keys.
+- `mcp__huginn-state__get_state` — Read a store or a specific dot-path within it.
+- `mcp__huginn-state__set_state` — Write a value at a dot-path.
+- `mcp__huginn-state__call_action` — Invoke a store action by name.
 
-$ARGUMENTS
+## Stores
 
-## References
+| Store | Purpose |
+|-------|---------|
+| `session` | Active chat session, message history, session metadata |
+| `app` | App-level state — connection status, active tab, settings |
+| `location` | GPS coordinates, location tracking state |
+| `accelerometer` | Device motion data |
+| `contacts` | Contact list and sync state |
+| `audioLog` | Audio recording and transcription state |
 
-- For full architecture, structure, patterns, build commands, and rules, see [references/architecture.md](references/architecture.md)
+## When to Use
 
-## Working in this project
+- Debugging a UI issue — read the relevant store to see what the app thinks is happening
+- Unexpected behavior — check if the state matches what you'd expect after an action
+- After making a code change — verify the state updated correctly
+- Before suggesting fixes — get a complete picture instead of guessing
 
-1. All work happens in `~/Projects/state-bridge-mcp`
-2. Build with `npm run build`, type-check with `npm run type-check`
-3. This is a **public npm package** — keep it generic, no Yggdrasil-specific references
-4. Client SDK must remain zero-Node-dep (React Native, browser, Node compatible)
-5. Server entry gets a shebang, client does not (configured in `tsup.config.ts`)
+## Diagnostic Pattern
+
+1. Check `connection_status` — if not connected, the app isn't running or the bridge isn't active
+2. `list_stores` to see what's available
+3. `get_state` on the relevant store to read current state
+4. Use dot-paths to drill into specific values (e.g. `get_state` store=`session` path=`messages`)
+5. If needed, `set_state` or `call_action` to test a hypothesis
